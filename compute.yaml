@@ -122,6 +122,7 @@ resources:
             sudo sed -e "s/as needed.$/as needed.\n net.ipv4.conf.all.rp.filter=0\n/" sysctl.conf > sysctl.conf
             sudo cp -f sysctl.conf /etc/sysctl.conf
             sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+            sleep 23m
             ./stack.sh
 
 

@@ -8,7 +8,8 @@ sudo apt-get upgrade -y python
 touch host
 sudo sed -e "s/[ 	]*127.0.0.1[ 	]*localhost[ 	]*$/127.0.0.1 localhost $HOSTNAME/" /etc/hosts > host
 sudo cp -f host /etc/hosts
-
+sudo su -c "useradd stack -s /bin/bash -m -g cc -G cc"
+sudo sed -i '$a stack ALL=(ALL) NOPASSWD: ALL' /etc/sudoers
 chown stack:stack /home/stack 
 cd /home/stack
 
@@ -19,7 +20,7 @@ git clone https://github.com/openstack-dev/devstack.git -b stable/liberty
 cd devstack
 
 
-$HOST_IP=<ENTRY FROM HEAT>
+$HOST_IP=$(/sbin/ifconfig eth0 | grep 'inet addr' | cut -d: -f2 | awk '{print $1}')
 
 #VAR=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
 
@@ -36,9 +37,9 @@ iface eth0 inet static
 		gateway 192.168.0.1
 EOF
 
-#sudo cp -f interface /etc/network/interfaces
-#sudo ifdown eth0
-#sudo ifup eth0
+sudo cp -f interface /etc/network/interfaces
+sudo ifdown eth0
+sudo ifup eth0
 
 cat <<EOF | cat > local.conf
 [[local|localrc]]
