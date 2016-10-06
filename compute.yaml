@@ -30,7 +30,7 @@ parameters:
   reservation_id:
     type: string
     description: ID of the Blazar reservation to use for launching instances.
-    default: 359852fb-e5ff-47eb-8f9b-989ed611c025 
+    default: 46d62373-472f-4a0c-b706-d06216d17388
 
 resources:
   compute_node:
@@ -129,4 +129,4 @@ resources:
 outputs:
   instance2_ip:
     description: The id address Compute node
-    value: { get_attr: [control_node, first_address] }
+    value: { get_attr: [compute_node, first_address] }
