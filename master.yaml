@@ -23,7 +23,7 @@ parameters:
     type: string
     description: ID of the network to use
     default: 915853fe-10c5-4dac-a402-ef1ebc53e427
-    
+
   reservation_id:
     type: string
     description: ID of the Blazar reservation to use for launching instances.
@@ -47,3 +47,7 @@ resources:
       key_name: { get_param: key_name }
       network_id: { get_param: network_id }
       reservation_id: { get_param: reservation_id }
+      master:
+        get_attr:
+          - control_node
+          - instance1_ip
