@@ -18,6 +18,28 @@ git clone https://github.com/openstack-dev/devstack.git -b stable/liberty
 
 cd devstack
 
+$SERVICE_HOST=<Controller-Ip-ENTRY FROM HEAT>
+$HOST_IP=<ENTRY FROM HEAT>
+
+#VAR=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
+
+#printf '\nHOST_IP=%s'$VAR'\n' >> local.conf
+
+
+
+touch interface
+cat <<EOF | cat > interface
+auto eth0
+iface eth0 inet static
+        address $HOST_IP 
+        netmask 255.255.255.0
+        gateway 192.168.0.1
+EOF
+
+#sudo cp -f interface /etc/network/interfaces
+#sudo ifdown eth0
+#sudo ifup eth0
+
 cat <<EOF | cat > local.conf
 [[local|localrc]]
 #credential
@@ -31,11 +53,11 @@ FLAT_INTERFACE=eth0
 FIXED_RANGE=192.168.1.0/24
 NETWORK_GATEWAY=192.168.1.1
 FIXED_NETWORK_SIZE=4096
-HOST_IP=192.168.0.137
+HOST_IP=$HOST_IP
 PUBLIC_NETWORK_GATEWAY=192.168.0.1
 #multi_host
 MULTI_HOST=1
-SERVICE_HOST=192.168.0.134
+SERVICE_HOST=$SERVICE_HOST
 DATABASE_TYPE=mysql
 MYSQL_HOST=$SERVICE_HOST
 RABBIT_HOST=$SERVICE_HOST
@@ -59,24 +81,6 @@ LOG_COLOR=True
 SCREEN_LOGDIR=/opt/stack/logs
 EOF
 
-VAR=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
-
-printf '\nHOST_IP=%s'$VAR'\n' >> local.conf
-
-touch interfaces
-cat <<EOF | cat > interfaces
-auto eth0
-iface eth0 inet static
-        address 192.168.0.137 
-        netmask 255.255.255.0
-        gateway 192.168.0.1
-EOF
-
-sudo cp -f interfaces /etc/network/
-sudo ifdown eth0
-sudo ifup eth0
-
-
 touch sysctl.conf
 sudo sed -e "s/as needed.$/as needed.\n net.ipv4.ip_forward=1\n/" /etc/sysctl.conf >  sysctl.conf
 
@@ -91,4 +95,5 @@ sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
 
 
- #./stack.sh
+
+ ./stack.sh

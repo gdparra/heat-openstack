@@ -1,7 +1,5 @@
 #!/bin/bash
 
-
-
 sudo apt-get update
 sudo apt-get install -y git python-pip vim
 sudo apt-get upgrade -y python
@@ -9,7 +7,7 @@ sudo apt-get upgrade -y python
 
 touch host
 sudo sed -e "s/[ 	]*127.0.0.1[ 	]*localhost[ 	]*$/127.0.0.1 localhost $HOSTNAME/" /etc/hosts > host
-sudo cp host /etc/hosts
+sudo cp -f host /etc/hosts
 
 chown stack:stack /home/stack 
 cd /home/stack
@@ -20,15 +18,27 @@ git clone https://github.com/openstack-dev/devstack.git -b stable/liberty
 
 cd devstack
 
+
+$HOST_IP=<ENTRY FROM HEAT>
+
+#VAR=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
+
+#printf '\nHOST_IP=%s'$VAR'\n' >> local.conf
+#printf '	address '$VAR'\n'>> interface
+
 #git clone https://github.com/BAbrandon/ScriptsForHeat.git
 touch interface
 cat <<EOF | cat > interface
 auto eth0
 iface eth0 inet static
-        address 192.168.0.134 
-	netmask 255.255.255.0
-	gateway 192.168.0.1
+        address $HOST_IP 
+		netmask 255.255.255.0
+		gateway 192.168.0.1
 EOF
+
+#sudo cp -f interface /etc/network/interfaces
+#sudo ifdown eth0
+#sudo ifup eth0
 
 cat <<EOF | cat > local.conf
 [[local|localrc]]
@@ -43,7 +53,7 @@ FLAT_INTERFACE=eth0
 FIXED_RANGE=192.168.1.0/24
 NETWORK_GATEWAY=192.168.1.1
 FIXED_NETWORK_SIZE=4096
-HOST_IP=192.168.0.134
+HOST_IP=$HOST_IP
 PUBLIC_NETWORK_GATEWAY=192.168.0.1
 #multi_host
 MULTI_HOST=1
@@ -67,15 +77,9 @@ Q_PLUGIN=ml2
 Q_ML2_TENANT_NETWORK_TYPE=vxlan
 EOF
 
-VAR=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
 
-printf '\nHOST_IP=%s'$VAR'\n' >> local.conf
-printf '	address '$VAR'\n'>> interface
 
-sudo cp -f interface /etc/network/interfaces
-#made change to interface have to bring down and up 
-sudo fdown eth0
-sudo ifup eth0
+
 
 touch sysctl.conf
 sudo sed -e "s/as needed.$/as needed.\n net.ipv4.ip_forward=1\n/" /etc/sysctl.conf >  sysctl.conf
@@ -87,7 +91,9 @@ sudo sed -e "s/as needed.$/as needed.\n net.ipv4.conf.all.rp.filter=0\n/" sysctl
 sudo cp sysctl.conf /etc/sysctl.conf
 
 sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+
 cat <<EOF | cat > local.sh
 for i in `seq 2 10`; do /opt/stack/nova/bin/nova-manage fixed reserve 192.168.1.$i; done
 EOF
-#./stack.sh
+
+./stack.sh
