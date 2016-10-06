@@ -97,4 +97,4 @@ sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
 
 sleep 23m
- ./stack.sh
+./stack.sh
