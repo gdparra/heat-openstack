@@ -1,0 +1,55 @@
+heat_template_version: 2015-10-15
+
+description: Template for compute instance
+
+parameters:
+  image_id:
+    type: string
+    description: Name or ID of the image to launch
+    default: CC-Ubuntu14.04
+    constraints:
+    - custom_constraint: glance.image
+  instance_type:
+    type: string
+    description: Instance type to launch
+    default: baremetal
+    constraints:
+    - custom_constraint: nova.flavor
+  key_name:
+    type: string
+    description: Name of a KeyPair to enable SSH access to the instance
+    default: azhar2-key
+  network_id:
+    type: string
+    description: ID of the network to use
+    default: 915853fe-10c5-4dac-a402-ef1ebc53e427
+    
+  reservation_id:
+    type: string
+    description: ID of the Blazar reservation to use for launching instances.
+    default: 359852fb-e5ff-47eb-8f9b-989ed611c025 
+
+resources:
+  control_node:
+    type: OS::Nova::Server
+    properties:
+      name: ControlNode-Instance
+      flavor: { get_param: instance_type }
+      image: { get_param: image_id }
+      key_name: { get_param: key_name }
+      networks:
+         - network: { get_param: network_id }
+      scheduler_hints: { reservation: { get_param: reservation_id } }
+      user_data:
+        str_replace:
+          params:
+            $server_ip: { get_attr: [control_node, first_address] }
+          template: | 
+            #!/bin/bash 
+            touch file1
+            cat file2.txt
+            
+outputs:
+  instance1_ip:
+    description: Ip address od control node
+    value: { get_attr: [compute_node, first_address] }
