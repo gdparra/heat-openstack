@@ -19,8 +19,8 @@ git clone https://github.com/openstack-dev/devstack.git -b stable/liberty
 
 cd devstack
 
-$SERVICE_HOST=$master_ip$
-$HOST_IP=$(/sbin/ifconfig eth0 | grep 'inet addr' | cut -d: -f2 | awk '{print $1}')
+SERVICE_HOST=$master_ip$
+HOST_IP=$(/sbin/ifconfig eth0 | grep 'inet addr' | cut -d: -f2 | awk '{print $1}')
 
 #VAR=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
 
