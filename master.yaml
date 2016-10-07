@@ -18,7 +18,7 @@ parameters:
   key_name:
     type: string
     description: Name of a KeyPair to enable SSH access to the instance
-    default: azhar2-key
+    default: cloud-key-pub
   network_id:
     type: string
     description: ID of the network to use
