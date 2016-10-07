@@ -36,7 +36,7 @@ iface eth0 inet static
         address $HOST_IP 
 		netmask 255.255.254.0
 		broadcast 10.40.1.255
-		gateway 192.168.0.1
+		gateway 10.40.1.254
 EOF
 
 #sudo cp -f interface /etc/network/interfaces
@@ -57,7 +57,7 @@ FIXED_RANGE=192.168.1.0/24
 NETWORK_GATEWAY=192.168.1.1
 FIXED_NETWORK_SIZE=4096
 HOST_IP=$HOST_IP
-PUBLIC_NETWORK_GATEWAY=192.168.0.1
+PUBLIC_NETWORK_GATEWAY=10.40.1.254
 #multi_host
 MULTI_HOST=1
 # Enable Logging
