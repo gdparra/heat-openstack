@@ -10,12 +10,13 @@ sudo sed -e "s/[        ]*127.0.0.1[    ]*localhost[    ]*$/127.0.0.1 localhost 
 sudo cp -f host /etc/hosts
 sudo su -c "useradd stack -s /bin/bash -m -g cc -G cc"
 sudo sed -i '$a stack ALL=(ALL) NOPASSWD: ALL' /etc/sudoers
-chown stack:stack /home/stack
+chown stack:cc /home/stack
 cd /home/stack
 
 
 
 git clone https://github.com/openstack-dev/devstack.git -b stable/liberty
+sudo chown -R stack:cc /home/stack/*
 
 cd devstack
 
@@ -33,13 +34,14 @@ cat <<EOF | cat > interface
 auto eth0
 iface eth0 inet static
         address $HOST_IP 
-        netmask 255.255.255.0
+        netmask 255.255.254.0
+        broadcast 10.40.1.255
         gateway 192.168.0.1
 EOF
 
-sudo cp -f interface /etc/network/interfaces
-sudo ifdown eth0
-sudo ifup eth0
+#sudo cp -f interface /etc/network/interfaces
+#sudo ifdown eth0
+#sudo ifup eth0
 
 cat <<EOF | cat > local.conf
 [[local|localrc]]
@@ -70,7 +72,7 @@ CINDER_SERVICE_HOST=$SERVICE_HOST
 NOVA_VNC_ENABLED=True
 NOVNCPROXY_URL="http://$SERVICE_HOST:6080/vnc_auto.html"
 VNCSERVER_LISTEN=$HOST_IP
-VNCSERVER_PROXYCLIENT_ADDRESS=$VNCSERVER_LISTEN
+VNCSERVER_PROXYCLIENT_ADDRESS=$HOST_IP
 #service
 ENABLED_SERVICES=n-cpu,n-api,n-api-meta,neutron,q-agt,q-meta
 Q_PLUGIN=ml2
