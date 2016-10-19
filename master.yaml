@@ -135,7 +135,8 @@ resources:
             path: /home/stack/start.sh
             permissions: 0755
         runcmd:
-            - su -l stack ./start.sh
+          - su -l stack ./start.sh
+
 
   compute_node:
     type: OS::Nova::Server
