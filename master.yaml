@@ -135,7 +135,7 @@ resources:
             path: /home/stack/start.sh
             permissions: 0777
         runcmd:
-          - su -l stack ./home/stack/start.sh
+            - su -l stack ./home/stack/start.sh
 
 
   compute_node:
@@ -248,4 +248,4 @@ resources:
                 path: /home/stack/start.sh
                 permissions: 0777
             runcmd:
-              - su -l stack ./home/stack/start.sh
+                - su -l stack ./home/stack/start.sh
