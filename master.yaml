@@ -121,6 +121,7 @@ resources:
                 enable_service q-lbaas
                 Q_PLUGIN=ml2
                 Q_ML2_TENANT_NETWORK_TYPE=vxlan
+                Q_AGENT=linuxbridge
                 EOF
                 touch sysctl.conf
                 sudo sed -e "s/as needed.$/as needed.\n net.ipv4.ip_forward=1\n/" /etc/sysctl.conf >  sysctl.conf
@@ -233,6 +234,7 @@ resources:
                     ENABLED_SERVICES=n-cpu,n-api,n-api-meta,neutron,q-agt,q-meta
                     Q_PLUGIN=ml2
                     Q_ML2_TENANT_NETWORK_TYPE=vxlan
+                    Q_AGENT=linuxbridge
                     # Enable Logging
                     LOGFILE=/opt/stack/logs/stack.sh.log
                     VERBOSE=True
