@@ -131,11 +131,13 @@ resources:
                 cat <<EOF | cat > local.sh
                 for i in `seq 2 10`; do /opt/stack/nova/bin/nova-manage fixed reserve 192.168.1.$i; done
                 EOF
-                ./home/stack/devstack/stack.sh
+                ./stack.sh
             path: /home/stack/start.sh
-            permissions: 0777
+            permissions: 0755
         runcmd:
-            - su -l stack ./home/stack/start.sh
+          - cd /home/stack
+          - pwd
+          - su -l stack ./start.sh
 
 
   compute_node:
@@ -244,8 +246,10 @@ resources:
                     sudo cp -f sysctl.conf /etc/sysctl.conf
                     sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
                     sleep 23m
-                    ./home/stack/devstack/stack.sh
+                    ./stack.sh
                 path: /home/stack/start.sh
-                permissions: 0777
+                permissions: 0755
             runcmd:
-                - su -l stack ./home/stack/start.sh
+              - cd /home/stack
+              - pwd
+              - su -l stack ./start.sh
